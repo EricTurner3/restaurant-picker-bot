@@ -241,13 +241,13 @@ function receivedMessage(event) {
   } else if (quickReply) {
     var quickReplyPayload = quickReply.payload;
     if(quickReplyPayload == "RESTAURANT_YES"){
-		sendTypingOn(senderId);
+		sendTypingOn(senderID);
 	}
 	else if (quickReplyPayload == "RESTAURANT_NO"){
-		sendTypingOn(senderId);
+		sendTypingOn(senderID);
 	}
 	else{
-		sendTypingOn(senderId);
+		sendTypingOn(senderID);
 		sendTextMessage(senderID, "Quick Reply Action Received. ")
 	}
 
@@ -556,6 +556,11 @@ function sendRestaurant(recipientId) {
       }
     }
   };  
+
+  sendTypingOff(recipientId);
+  callSendAPI(messageData);
+}
+
 function getRestaurant(){
 	var restaurant = [
 	"McDonalds",
@@ -570,9 +575,6 @@ function getRestaurant(){
 	];
 	var choice = restaurant[Math.floor(Math.random() * restaurant.length)];
 	return choice;
-}
-
-  callSendAPI(messageData);
 }
 
 /*
