@@ -530,7 +530,9 @@ function sendButtonMessage(recipientId) {
  *
  */
 function sendRestaurant(recipientId) {
-  var restaurantName = getRestaurant();
+  var restaurant = getRestaurant();
+  var restaurantName = restaurant[0];
+  var restaurantIndex = restaurant[1];
   var messageData = {
     recipient: {
       id: recipientId
@@ -543,15 +545,11 @@ function sendRestaurant(recipientId) {
           elements: [{
             title: restaurantName,
             subtitle: "You should eat here!",              
-            image_url: SERVER_URL + "/assets/food.jpg",
+            image_url: SERVER_URL + "/assets/restaurants/"+restaurantIndex+".jpg",
             buttons: [{
               type: "web_url",
-              url: "https://maps.google.com/?q="+restaurantName,
-              title: "Find Nearest Restaurant"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Thanks!",
+              url: "http://maps.apple.com/?q="+restaurantName,
+              title: "Find Nearest"
             }],
           }]
         }
@@ -563,21 +561,22 @@ function sendRestaurant(recipientId) {
   callSendAPI(messageData);
 }
 
-function getRestaurant(){
+var getRestaurant = function(){
 	var restaurant = [
-	"McDonalds",
-	"Burger King",
-	"Steak N Shake",
-	"Hardees",
-	"Wendys",
-	"Starbucks",
-	"Texas Roadhouse",
-	"Denny's",
-	"Rallys"
+	"McDonalds", 		//0
+	"Burger King", 		//1
+	"Steak N Shake", 	//2
+	"Hardees", 			//3
+	"Wendys", 			//4
+	"Starbucks", 		//5
+	"Texas Roadhouse", 	//6
+	"Denny's",			//7
+	"Rallys"			//8
 	];
-	var choice = restaurant[Math.floor(Math.random() * restaurant.length)];
-	return choice;
-}
+	var position = Math.floor(Math.random() * restaurant.length);
+	var choice = restaurant[position];
+	return [position, choice];
+};
 
 /*
  * Send a receipt message using the Send API.
