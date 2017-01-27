@@ -258,12 +258,12 @@ function receivedMessage(event) {
   if (messageText) {
 	var restaurant = messageText.includes("eat" || "restaurant")
 	if(restaurant){
-		sendTypingOn(senderId);
-		sendRestaurant(senderId);
+		sendTypingOn(senderID);
+		sendRestaurant(senderID);
 	}
 	else{
-		sendTypingOn(senderId);
-		sendErrorReply(senderId);
+		sendTypingOn(senderID);
+		sendErrorReply(senderID);
 	}
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
