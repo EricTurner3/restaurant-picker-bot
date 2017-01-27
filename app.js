@@ -259,12 +259,13 @@ function receivedMessage(event) {
     return;
   }
   //Catch postbacks from buttons in responses clicked
-  else if (event.postback && event.postback.payload){
+  else if (event.postback && event.postback.payload && event.sender.id ){
+	  var userID = event.sender.id;
 	  var payload = event.postback.payload;
 	  //When the 'Another' Button is clicked
 	  if(payload == "RESTAURANT_YES"){
-		sendTypingOn(senderID);
-		sendRestaurant(senderID);
+		sendTypingOn(userID);
+		sendRestaurant(userID);
 	}
 	return;
   }
