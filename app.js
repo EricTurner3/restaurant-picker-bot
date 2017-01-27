@@ -154,9 +154,7 @@ function verifyRequestSignature(req, res, buf) {
   var signature = req.headers["x-hub-signature"];
 
   if (!signature) {
-    // For testing, let's log an error. In production, you should throw an 
-    // error.
-    console.error("Couldn't validate the signature.");
+    throw new Error("Couldn't validate the signature.");
   } else {
     var elements = signature.split('=');
     var method = elements[0];
@@ -242,74 +240,31 @@ function receivedMessage(event) {
     return;
   } else if (quickReply) {
     var quickReplyPayload = quickReply.payload;
-    console.log("Quick reply for message %s with payload %s",
-      messageId, quickReplyPayload);
+    if(quickReplyPayload == "RESTAURANT_YES"){
+		sendTypingOn(senderId);
+	}
+	else if (quickReplyPayload == "RESTAURANT_NO"){
+		sendTypingOn(senderId);
+	}
+	else{
+		sendTypingOn(senderId);
+		sendTextMessage(senderID, "Quick Reply Action Received. ")
+	}
 
     sendTextMessage(senderID, "Quick reply tapped");
     return;
   }
 
   if (messageText) {
-
-    // If we receive a text message, check to see if it matches any special
-    // keywords and send back the corresponding example. Otherwise, just echo
-    // the text we received.
-    switch (messageText) {
-      case 'image':
-        sendImageMessage(senderID);
-        break;
-
-      case 'gif':
-        sendGifMessage(senderID);
-        break;
-
-      case 'audio':
-        sendAudioMessage(senderID);
-        break;
-
-      case 'video':
-        sendVideoMessage(senderID);
-        break;
-
-      case 'file':
-        sendFileMessage(senderID);
-        break;
-
-      case 'button':
-        sendButtonMessage(senderID);
-        break;
-
-      case 'generic':
-        sendGenericMessage(senderID);
-        break;
-
-      case 'receipt':
-        sendReceiptMessage(senderID);
-        break;
-
-      case 'quick reply':
-        sendQuickReply(senderID);
-        break;        
-
-      case 'read receipt':
-        sendReadReceipt(senderID);
-        break;        
-
-      case 'typing on':
-        sendTypingOn(senderID);
-        break;        
-
-      case 'typing off':
-        sendTypingOff(senderID);
-        break;        
-
-      case 'account linking':
-        sendAccountLinking(senderID);
-        break;
-
-      default:
-        sendTextMessage(senderID, messageText);
-    }
+	var restaurant = messageText.includes("eat" || "restaurant")
+	if(restaurant){
+		sendTypingOn(senderId);
+		sendRestaurant(senderId);
+	}
+	else{
+		sendTypingOn(senderId);
+		sendErrorReply(senderId);
+	}
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
   }
@@ -528,7 +483,7 @@ function sendTextMessage(recipientId, messageText) {
       metadata: "DEVELOPER_DEFINED_METADATA"
     }
   };
-
+  sendTypingOff(recipientId);
   callSendAPI(messageData);
 }
 
@@ -572,7 +527,8 @@ function sendButtonMessage(recipientId) {
  * Send a Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendGenericMessage(recipientId) {
+function sendRestaurant(recipientId) {
+  var restaurantName = getRestaurant();
   var messageData = {
     recipient: {
       id: recipientId
@@ -583,38 +539,38 @@ function sendGenericMessage(recipientId) {
         payload: {
           template_type: "generic",
           elements: [{
-            title: "rift",
-            subtitle: "Next-generation virtual reality",
-            item_url: "https://www.oculus.com/en-us/rift/",               
-            image_url: SERVER_URL + "/assets/rift.png",
+            title: restaurantName,
+            subtitle: "You should eat here!",              
+            image_url: SERVER_URL + "/assets/food.jpg",
             buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/rift/",
-              title: "Open Web URL"
+              type: "location",
+              url: "https://maps.google.com/?q="+restaurantName,
+              title: "Find Nearest Restaurant"
             }, {
               type: "postback",
               title: "Call Postback",
-              payload: "Payload for first bubble",
+              payload: "Thanks!",
             }],
-          }, {
-            title: "touch",
-            subtitle: "Your Hands, Now in VR",
-            item_url: "https://www.oculus.com/en-us/touch/",               
-            image_url: SERVER_URL + "/assets/touch.png",
-            buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/touch/",
-              title: "Open Web URL"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for second bubble",
-            }]
           }]
         }
       }
     }
   };  
+function getRestaurant(){
+	var restaurant = [
+	"McDonalds",
+	"Burger King",
+	"Steak N Shake",
+	"Hardees",
+	"Wendys",
+	"Starbucks",
+	"Texas Roadhouse",
+	"Denny's",
+	"Rallys"
+	];
+	var choice = restaurant[Math.floor(Math.random() * restaurant.length)];
+	return choice;
+}
 
   callSendAPI(messageData);
 }
@@ -715,7 +671,32 @@ function sendQuickReply(recipientId) {
       ]
     }
   };
+  
+  callSendAPI(messageData);
+}
 
+function sendErrorReply(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: "Did you want me to find a restaurant for you to eat at?",
+      quick_replies: [
+        {
+          "content_type":"text",
+          "title":"Yes",
+          "payload":"RESTAURANT_YES"
+        },
+        {
+          "content_type":"text",
+          "title":"No",
+          "payload":"RESTAURANT_NO"
+        }
+      ]
+    }
+  };
+  sendTypingOff(recipientId);
   callSendAPI(messageData);
 }
 
