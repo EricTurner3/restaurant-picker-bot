@@ -531,8 +531,8 @@ function sendButtonMessage(recipientId) {
  */
 function sendRestaurant(recipientId) {
   var restaurant = getRestaurant();
-  var restaurantName = restaurant[0];
-  var restaurantIndex = restaurant[1];
+  var restaurantName = restaurant[1];
+  var restaurantIndex = restaurant[0];
   var messageData = {
     recipient: {
       id: recipientId
