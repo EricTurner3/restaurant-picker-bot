@@ -258,17 +258,6 @@ function receivedMessage(event) {
 
     return;
   }
-  //Catch postbacks from buttons in responses clicked
-  else if (event.postback && event.postback.payload && event.sender.id ){
-	  var userID = event.sender.id;
-	  var payload = event.postback.payload;
-	  //When the 'Another' Button is clicked
-	  if(payload == "RESTAURANT_YES"){
-		sendTypingOn(userID);
-		sendRestaurant(userID);
-	}
-	return;
-  }
 
   if (messageText) {
 	var restaurant = messageText.includes("eat" || "restaurant")
@@ -331,10 +320,10 @@ function receivedPostback(event) {
   console.log("Received postback for user %d and page %d with payload '%s' " + 
     "at %d", senderID, recipientID, payload, timeOfPostback);
 
-  // When a postback is called, we'll send a message back to the sender to 
-  // let them know it was successful
-  if (payload == "RESTAURANT_YES"){
-	  sendRestaurant(recipientID);
+  // If the 'Another Button' is selected it will run this
+  if (payload == "RESTAURANT_ANOTHER"){
+	  sendTypingOn
+	  sendRestaurant(senderID);
   }
   else{
 	  sendTextMessage(recipientID,"Acknowledged.");
@@ -444,7 +433,7 @@ function sendRestaurant(recipientId) {
             },
 			{
               type: "postback",
-              payload: "RESTAURANT_YES",
+              payload: "RESTAURANT_ANOTHER",
               title: "Another"
             }],
           }]
@@ -584,12 +573,12 @@ function sendErrorReply(recipientId) {
       quick_replies: [
         {
           "content_type":"text",
-          "title":"Yes",
+          "title":"👍 Yes",
           "payload":"RESTAURANT_YES"
         },
         {
           "content_type":"text",
-          "title":"No",
+          "title":"👎 No",
           "payload":"RESTAURANT_NO"
         }
       ]
