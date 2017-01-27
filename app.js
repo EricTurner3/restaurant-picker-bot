@@ -240,18 +240,20 @@ function receivedMessage(event) {
     return;
   } else if (quickReply) {
     var quickReplyPayload = quickReply.payload;
+	console.log(quickReplyPayload);
     if(quickReplyPayload == "RESTAURANT_YES"){
 		sendTypingOn(senderID);
+		sendRestaurant(senderID);
 	}
 	else if (quickReplyPayload == "RESTAURANT_NO"){
 		sendTypingOn(senderID);
+		sendTextMessage(senderID, "Okay, let me know if you want me to find you a restaurant! ")
 	}
 	else{
 		sendTypingOn(senderID);
 		sendTextMessage(senderID, "Quick Reply Action Received. ")
 	}
 
-    sendTextMessage(senderID, "Quick reply tapped");
     return;
   }
 
