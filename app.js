@@ -12,7 +12,7 @@
 
 const 
   bodyParser = require('body-parser'),
-  //config = require('config'),
+  config = require('./config'),
   crypto = require('crypto'),
   express = require('express'),
   https = require('https'),  
@@ -31,23 +31,23 @@ app.use(express.static('public'));
  */
 
 // App Secret can be retrieved from the App Dashboard
-const APP_SECRET = (process.env.MESSENGER_APP_SECRET);/* ? 
+const APP_SECRET = (Config.APP_SECRET);/* ? 
   process.env.MESSENGER_APP_SECRET :
   config.get('appSecret');*/
-console.log("APP_SECRET: " + APP_SECRET);
+  
 // Arbitrary value used to validate a webhook
-const VALIDATION_TOKEN = (process.env.MESSENGER_VALIDATION_TOKEN); /* ?
+const VALIDATION_TOKEN = (Config.VALIDATION_TOKEN); /* ?
   (process.env.MESSENGER_VALIDATION_TOKEN) :
   config.get('validationToken');*/
-console.log("VALIDATION_TOKEN: " + VALIDATION_TOKEN);
+  
 // Generate a page access token for your page from the App Dashboard
-const PAGE_ACCESS_TOKEN = (process.env.MESSENGER_PAGE_ACCESS_TOKEN); /*?
+const PAGE_ACCESS_TOKEN = (Config.PAGE_ACCESS_TOKEN); /*?
   (process.env.MESSENGER_PAGE_ACCESS_TOKEN) :
   config.get('pageAccessToken');*/
-console.log("PAGE_ACCESS_TOKEN: "+ PAGE_ACCESS_TOKEN);
+  
 // URL where the app is running (include protocol). Used to point to scripts and 
 // assets located at this address. 
-const SERVER_URL = (process.env.SERVER_URL); /* ?
+const SERVER_URL = (Config.SERVER_URL); /* ?
   (process.env.SERVER_URL) :
   config.get('serverURL');*/
 console.log("SERVER_URL: " + SERVER_URL);
