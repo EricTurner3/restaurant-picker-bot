@@ -234,7 +234,7 @@ function receivedMessage(event) {
   var quickReply = message.quick_reply;
   
   //Postback from the buttons
-  var postback = var payload = event.postback;
+  var postback = event.postback;
   var payload = event.postback.payload;
 
   if (isEcho) {
