@@ -232,10 +232,8 @@ function receivedMessage(event) {
   var messageText = message.text;
   var messageAttachments = message.attachments;
   var quickReply = message.quick_reply;
+
   
-  //Postback from the buttons
-  var postback = event.postback;
-  var payload = event.postback.payload;
 
   if (isEcho) {
     // Just logging message echoes to console
@@ -261,7 +259,8 @@ function receivedMessage(event) {
     return;
   }
   //Catch postbacks from buttons in responses clicked
-  else if (postback && payload){
+  else if (event.postback && event.postback.payload){
+	  var payload = event.postback.payload;
 	  //When the 'Another' Button is clicked
 	  if(payload == "RESTAURANT_YES"){
 		sendTypingOn(senderID);
