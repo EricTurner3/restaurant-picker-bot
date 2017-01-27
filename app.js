@@ -247,7 +247,7 @@ function receivedMessage(event) {
 	}
 	else if (quickReplyPayload == "RESTAURANT_NO"){
 		sendTypingOn(senderID);
-		sendTextMessage(senderID, "Okay, let me know if you want me to find you a restaurant! ")
+		sendTextMessage(senderID, "Okay, let me know if you want me to find you a restaurant!")
 	}
 	else{
 		sendTypingOn(senderID);
@@ -545,7 +545,7 @@ function sendRestaurant(recipientId) {
             subtitle: "You should eat here!",              
             image_url: SERVER_URL + "/assets/food.jpg",
             buttons: [{
-              type: "location",
+              type: "web_url",
               url: "https://maps.google.com/?q="+restaurantName,
               title: "Find Nearest Restaurant"
             }, {
