@@ -24,6 +24,33 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(express.static('public'));
 
+//Initialize node-mySQL
+var mysql = require("mysql");
+
+var con = mysql.createConnection({
+  host: config.databaseHost,
+  user: config.databaseUser,
+  password: config.databasePass
+});
+
+con.connect(function(err){
+  if(err){
+    console.log('Error connecting to Database');
+    return;
+  }
+  console.log('Connection established');
+});
+
+con.end(function(err) {
+  // The connection is terminated gracefully
+  // Ensures all previously enqueued queries are still
+  // before sending a COM_QUIT packet to the MySQL server.
+  console.log("Database Connection Ended.")
+});
+
+//Finding Restaurant Mode
+var findRest = 0;
+
 /*
  * Be sure to setup your config values before running this code. You can 
  * set them using environment variables or modifying the config file in /config.
@@ -270,7 +297,11 @@ function receivedMessage(event) {
 		sendErrorReply(senderID);
 	}
   } else if (messageAttachments) {
-    sendTextMessage(senderID, "Message with attachment received");
+    if(findRest == 1)
+	{
+		var lat = messageAttachments[0].payload.coordinates.lat;
+		var lng = messageAttachments[0].payload.coordinates.long;
+	}
   }
 }
 
@@ -325,6 +356,11 @@ function receivedPostback(event) {
 	  sendTypingOn
 	  sendRestaurant(senderID);
   }
+  if (payload == "RESTAURANT_FIND"){
+	  sendTypingOn
+	  sendTextMessage(recipientID,"Send me your location and I'll find the nearest one!");
+	  findRest = 1;
+  }
   else{
 	  sendTextMessage(recipientID,"Acknowledged.");
   }
@@ -373,7 +409,7 @@ function sendTextMessage(recipientId, messageText) {
  * Send a button message using the Send API.
  *
  */
-function sendButtonMessage(recipientId) {
+function sendMap(recipientId) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -427,14 +463,14 @@ function sendRestaurant(recipientId) {
             subtitle: "You should eat here!",              
             image_url: SERVER_URL + "/assets/restaurants/"+restaurantIndex+".jpg",
             buttons: [{
-              type: "web_url",
-              url: "http://maps.apple.com/?q="+restaurantName,
-              title: "Find Nearest"
+              type: "postback",
+              url: "RESTAURANT_FIND",
+              title: "📍 Find Nearest"
             },
 			{
               type: "postback",
               payload: "RESTAURANT_ANOTHER",
-              title: "Another"
+              title: "🍽️ Another!"
             }],
           }]
         }
@@ -463,106 +499,12 @@ var getRestaurant = function(){
 	return [position, choice];
 };
 
-/*
- * Send a receipt message using the Send API.
- *
- */
-function sendReceiptMessage(recipientId) {
-  // Generate a random receipt ID as the API requires a unique ID
-  var receiptId = "order" + Math.floor(Math.random()*1000);
-
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message:{
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "receipt",
-          recipient_name: "Peter Chang",
-          order_number: receiptId,
-          currency: "USD",
-          payment_method: "Visa 1234",        
-          timestamp: "1428444852", 
-          elements: [{
-            title: "Oculus Rift",
-            subtitle: "Includes: headset, sensor, remote",
-            quantity: 1,
-            price: 599.00,
-            currency: "USD",
-            image_url: SERVER_URL + "/assets/riftsq.png"
-          }, {
-            title: "Samsung Gear VR",
-            subtitle: "Frost White",
-            quantity: 1,
-            price: 99.99,
-            currency: "USD",
-            image_url: SERVER_URL + "/assets/gearvrsq.png"
-          }],
-          address: {
-            street_1: "1 Hacker Way",
-            street_2: "",
-            city: "Menlo Park",
-            postal_code: "94025",
-            state: "CA",
-            country: "US"
-          },
-          summary: {
-            subtotal: 698.99,
-            shipping_cost: 20.00,
-            total_tax: 57.67,
-            total_cost: 626.66
-          },
-          adjustments: [{
-            name: "New Customer Discount",
-            amount: -50
-          }, {
-            name: "$100 Off Coupon",
-            amount: -100
-          }]
-        }
-      }
-    }
-  };
-
-  callSendAPI(messageData);
-}
 
 /*
  * Send a message with Quick Reply buttons.
  *
  */
-function sendQuickReply(recipientId) {
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      text: "What's your favorite movie genre?",
-      quick_replies: [
-        {
-          "content_type":"text",
-          "title":"Action",
-          "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_ACTION"
-        },
-        {
-          "content_type":"text",
-          "title":"Comedy",
-          "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_COMEDY"
-        },
-        {
-          "content_type":"text",
-          "title":"Drama",
-          "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_DRAMA"
-        }
-      ]
-    }
-  };
-  
-  callSendAPI(messageData);
-}
-
+ //Default catch all quick reply
 function sendErrorReply(recipientId) {
   var messageData = {
     recipient: {

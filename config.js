@@ -15,9 +15,18 @@ var VALIDATION_TOKEN = process.env.VALIDATION_TOKEN;
 
 var SERVER_URL = process.env.SERVER_URL;
 
+//mySQL Variables
+
+var databaseHost = process.env.databaseHost;
+var databaseUser = process.env.databaseUser;
+var databasePass = process.env.databasePass;
+
 module.exports = {
   APP_SECRET: APP_SECRET,
   PAGE_ACCESS_TOKEN: PAGE_ACCESS_TOKEN,
   VALIDATION_TOKEN: VALIDATION_TOKEN,
   SERVER_URL:SERVER_URL,
+  databaseHost:databaseHost,
+  databaseUser:databaseUser,
+  databasePass:databasePass
 }
