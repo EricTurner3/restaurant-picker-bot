@@ -271,6 +271,7 @@ function receivedMessage(event) {
     var quickReplyPayload = quickReply.payload;
 	console.log(quickReplyPayload);
     if(quickReplyPayload == "RESTAURANT_YES"){
+		console.log("Retrieving Restaurant")
 		sendTypingOn(senderID);
 		sendRestaurant(senderID);
 	}
@@ -448,6 +449,7 @@ function sendMap(recipientId) {
 function sendRestaurant(recipientId) {
   var restaurant = getRestaurant();
   var restaurantName = restaurant[1];
+  console.log(restaurantName);
   var restaurantIndex = restaurant[0];
   var messageData = {
     recipient: {
