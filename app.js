@@ -28,9 +28,9 @@ app.use(express.static('public'));
 var mysql = require("mysql");
 
 var con = mysql.createConnection({
-  host: config.databaseHost,
-  user: config.databaseUser,
-  password: config.databasePass
+  host: '"' + config.databaseHost + '"',
+  user: '"' + config.databaseUser + '"',
+  password: '"' + config.databasePass + '"'
 });
 
 con.connect(function(err){
