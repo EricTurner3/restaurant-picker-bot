@@ -466,7 +466,7 @@ function sendRestaurant(recipientId) {
             image_url: SERVER_URL + "/assets/restaurants/"+restaurantIndex+".jpg",
             buttons: [{
               type: "postback",
-              url: "RESTAURANT_FIND",
+              payload: "RESTAURANT_FIND",
               title: "📍 Find Nearest"
             },
 			{
