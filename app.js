@@ -30,6 +30,7 @@ var mysql = require("mysql");
 var con = mysql.createConnection({
   host: '"' + config.databaseHost + '"',
   user: '"' + config.databaseUser + '"',
+  database: "ericturn_restaurant",
   password: '"' + config.databasePass + '"'
 }); 
 
