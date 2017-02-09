@@ -31,11 +31,11 @@ var con = mysql.createConnection({
   host: '"' + config.databaseHost + '"',
   user: '"' + config.databaseUser + '"',
   password: '"' + config.databasePass + '"'
-});
+}); 
 
 con.connect(function(err){
   if(err){
-    console.log('Error connecting to Database');
+    console.log('Error connecting to Database:' + err + "," + err.code);
     return;
   }
   console.log('Connection established');
