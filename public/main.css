@@ -1,5 +1,5 @@
 #banner {
-	background-image: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ), url("../public/images/hamburger.jpg");
+	background-image: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ), url("../images/hamburger.jpg");
 	padding: 0px;
 	height: 100%;
 	width: 100%;
