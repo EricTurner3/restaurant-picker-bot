@@ -1,0 +1,19 @@
+#banner {
+	background-image: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ), url("../public/images/hamburger.jpg");
+	padding: 0px;
+	height: 500px;
+	width: 100%;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50% 75%;
+	background-attachment: fixed;
+	text-align: center;
+	vertical-align: middle;
+	font-family: 'Anton', sans-serif;
+	font-size: 85px;
+	color: #FFF;
+	line-height:500px;
+}
+body{
+	margin: 0px !important;
+}
