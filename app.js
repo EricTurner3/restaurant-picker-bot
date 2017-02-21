@@ -498,9 +498,6 @@ function sendRestaurant(recipientId,restaurantType) {
 }
 
 var getRestaurant = function(restaurantType){
-	var position;
-	var choice;
-	var picture;
 	if (restaurantType == "Fast"){
 		con.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
             if(!err) {setRestaurant(rows);}           
@@ -525,9 +522,9 @@ var getRestaurant = function(restaurantType){
 		"Denny's",			//7
 		"Rally's"			//8
 		];
-		position = Math.floor(Math.random() * restaurant.length);
-		choice = restaurant[position];
-		picture = position;
+		var position = Math.floor(Math.random() * restaurant.length);
+		var choice = restaurant[position];
+		var picture = position;
 		
 		return [picture, choice];
 	}
@@ -537,9 +534,10 @@ var getRestaurant = function(restaurantType){
 
 function setRestaurant(value){
 	restaurantChoices = value;
-	position = Math.floor(Math.random() * restaurant.length);
-	choice = restaurant.name[position];
-	picture = restaurant.picture[position];
+	var position = Math.floor(Math.random() * restaurantChoices.length);
+	var choice = restaurantChoices.name[position];
+	var picture = restaurantChoices.picture[position];
+	
 	return [picture, choice];
 }
 
