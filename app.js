@@ -538,8 +538,8 @@ function setRestaurant(senderID, value){
 	var restParse = JSON.parse(JSON.stringify(restaurantChoices));
 	console.log(restParse);
 	var position = Math.floor(Math.random() * restaurantChoices.length);
-	var choice = restParse.RowDataPacket.name[position];
-	var picture = restParse.RowDataPacket.picture[position];
+	var choice = restParse.name[position];
+	var picture = restParse.picture[position];
 	
 	sendRestaurant(senderID, choice, picture);
 }
