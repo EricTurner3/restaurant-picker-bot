@@ -534,6 +534,7 @@ function getRestaurant(senderID, restaurantType){
 function setRestaurant(senderID, value){
 	
 	restaurantChoices = value;
+	console.log(restaurantChoices);
 	var position = Math.floor(Math.random() * restaurantChoices.length);
 	var choice = restaurantChoices.name[position];
 	var picture = restaurantChoices.picture[position];
