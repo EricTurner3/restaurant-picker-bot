@@ -502,7 +502,6 @@ var getRestaurant = function(restaurantType){
 	var picture;
 	if (restaurantType == "Fast"){
 		con.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
-            con.release();
             if(!err) {
                 for (var i in rows) {
 					var restaurant = rows[i];	
@@ -515,7 +514,6 @@ var getRestaurant = function(restaurantType){
 	}
 	else if (restaurantType == "Dine"){
 		con.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
-            con.release();
             if(!err) {
                 for (var i in rows) {
 					var restaurant = rows[i];	
