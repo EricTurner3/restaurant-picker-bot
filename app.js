@@ -269,6 +269,7 @@ function receivedMessage(event) {
   } else if (quickReply) {
     var quickReplyPayload = quickReply.payload;
 	console.log(quickReplyPayload);
+	
 	//First Quick Reply Set, Yes or No to Finding a Restaurant
     if(quickReplyPayload == "RESTAURANT_YES"){
 		console.log("Retrieving Restaurant")
@@ -279,24 +280,26 @@ function receivedMessage(event) {
 		sendTypingOn(senderID);
 		sendTextMessage(senderID, "Okay, let me know if you want me to find you a restaurant!")
 	}
+	
 	//Second Quick Reply, Find Fast Food or Restaurant
 	if(quickReplyPayload == "RESTAURANT_FAST"){
 		console.log("Retrieving Fast Food Restaurant");
 		sendTypingOn(senderID);
 		restType = "Fast";
-		sendRestaurant(senderID, restType);
+		getRestaurant(senderID, restType);
 	}
 	else if (quickReplyPayload == "RESTAURANT_DINE"){
 		console.log("Retrieving Dine-In Restaurant");
 		sendTypingOn(senderID);
 		restType = "Dine";
-		sendRestaurant(senderID, restType);
+		getRestaurant(senderID, restType);
 	}
+	/*
 	else{
 		sendTypingOn(senderID);
 		sendTextMessage(senderID, "Quick Reply Action Received. ")
 	}
-
+	*/
     return;
   }
 
@@ -459,11 +462,7 @@ function sendMap(recipientId) {
  * Send a Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendRestaurant(recipientId,restaurantType) {
-  var restaurant = getRestaurant(restaurantType);
-  var restaurantName = restaurant[1];
-  console.log(restaurantName);
-  var restaurantIndex = restaurant[0];
+function sendRestaurant(recipientId,restaurantName, restaurantIndex) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -497,15 +496,15 @@ function sendRestaurant(recipientId,restaurantType) {
   callSendAPI(messageData);
 }
 
-var getRestaurant = function(restaurantType){
+function getRestaurant(senderID, restaurantType){
 	if (restaurantType == "Fast"){
 		con.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
-            if(!err) {setRestaurant(rows);}           
+            if(!err) {setRestaurant(senderID, rows);}           
         });
 	}
 	else if (restaurantType == "Dine"){
 		con.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
-            if(!err) {setRestaurant(rows);}           
+            if(!err) {setRestaurant(senderID, rows);}           
         });
 	}
 	
@@ -526,19 +525,20 @@ var getRestaurant = function(restaurantType){
 		var choice = restaurant[position];
 		var picture = position;
 		
-		return [picture, choice];
+		sendRestaurant(senderID, choice, picture);
 	}
 	
 	
-};
+}
 
-function setRestaurant(value){
+function setRestaurant(senderID, value){
+	
 	restaurantChoices = value;
 	var position = Math.floor(Math.random() * restaurantChoices.length);
 	var choice = restaurantChoices.name[position];
 	var picture = restaurantChoices.picture[position];
 	
-	return [picture, choice];
+	sendRestaurant(senderID, choice, picture);
 }
 
 
