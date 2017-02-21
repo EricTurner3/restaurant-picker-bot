@@ -48,6 +48,7 @@ var findRest = 0;
 
 //Restaurant Type
 var restType;
+var restaurantChoices = [];
 
 /*
  * Be sure to setup your config values before running this code. You can 
@@ -502,32 +503,18 @@ var getRestaurant = function(restaurantType){
 	var picture;
 	if (restaurantType == "Fast"){
 		con.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
-            if(!err) {
-                for (var i in rows) {
-					var restaurant = rows[i];	
-				}
-				position = Math.floor(Math.random() * restaurant.length);
-				picture = restaurant.picture[position];
-				choice = restaurant.name[position];
-            }           
+            if(!err) {function setRestaurant(rows);}           
         });
 	}
 	else if (restaurantType == "Dine"){
 		con.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
-            if(!err) {
-                for (var i in rows) {
-					var restaurant = rows[i];	
-				}
-				position = Math.floor(Math.random() * restaurant.length);
-				picture = restaurant.picture[position];
-				choice = restaurant.name[position];
-            }           
+            if(!err) {function setRestaurant(rows);}           
         });
 	}
-	//Fallback incase Database cannot be reached
+	
 	else{
 		console.log("Using getRestaurant fallback method");
-		var restaurant = [
+		restaurantChoices = [
 		"McDonalds", 		//0
 		"Burger King", 		//1
 		"Steak N Shake", 	//2
@@ -541,12 +528,20 @@ var getRestaurant = function(restaurantType){
 		position = Math.floor(Math.random() * restaurant.length);
 		choice = restaurant[position];
 		picture = position;
+		
+		return [picture, choice];
 	}
 	
 	
-	
-	return [picture, choice];
 };
+
+function setRestaurant(value){
+	restaurantChoices = value;
+	position = Math.floor(Math.random() * restaurant.length);
+	choice = restaurant.name[position];
+	picture = restaurant.picture[position];
+	return [picture, choice];
+}
 
 
 /*
