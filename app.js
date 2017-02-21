@@ -501,8 +501,8 @@ var getRestaurant = function(restaurantType){
 	var choice;
 	var picture;
 	if (restaurantType == "Fast"){
-		connection.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
-            connection.release();
+		con.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
+            con.release();
             if(!err) {
                 for (var i in rows) {
 					var restaurant = rows[i];	
@@ -514,8 +514,8 @@ var getRestaurant = function(restaurantType){
         });
 	}
 	else if (restaurantType == "Dine"){
-		connection.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
-            connection.release();
+		con.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
+            con.release();
             if(!err) {
                 for (var i in rows) {
 					var restaurant = rows[i];	
