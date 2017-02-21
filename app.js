@@ -30,8 +30,8 @@ var mysql = require("mysql");
 var con = mysql.createConnection({
   host: config.databaseHost,
   user: config.databaseUser,
-  database: "ericturn_restaurant",
-  password: config.databasePass
+  password: config.databasePass,
+  database: "ericturn_restaurant"
 }); 
 
 con.connect(function(err){
@@ -42,15 +42,12 @@ con.connect(function(err){
   console.log('Connection established');
 });
 
-con.end(function(err) {
-  // The connection is terminated gracefully
-  // Ensures all previously enqueued queries are still
-  // before sending a COM_QUIT packet to the MySQL server.
-  console.log("Database Connection Ended.")
-});
 
 //Finding Restaurant Mode
 var findRest = 0;
+
+//Restaurant Type
+var restType;
 
 /*
  * Be sure to setup your config values before running this code. You can 
@@ -271,14 +268,28 @@ function receivedMessage(event) {
   } else if (quickReply) {
     var quickReplyPayload = quickReply.payload;
 	console.log(quickReplyPayload);
+	//First Quick Reply Set, Yes or No to Finding a Restaurant
     if(quickReplyPayload == "RESTAURANT_YES"){
 		console.log("Retrieving Restaurant")
 		sendTypingOn(senderID);
-		sendRestaurant(senderID);
+		findMealType(senderID);
 	}
 	else if (quickReplyPayload == "RESTAURANT_NO"){
 		sendTypingOn(senderID);
 		sendTextMessage(senderID, "Okay, let me know if you want me to find you a restaurant!")
+	}
+	//Second Quick Reply, Find Fast Food or Restaurant
+	if(quickReplyPayload == "RESTAURANT_FAST"){
+		console.log("Retrieving Fast Food Restaurant");
+		sendTypingOn(senderID);
+		restType = "Fast";
+		sendRestaurant(senderID, restType);
+	}
+	else if (quickReplyPayload == "RESTAURANT_DINE"){
+		console.log("Retrieving Dine-In Restaurant");
+		sendTypingOn(senderID);
+		restType = "Dine";
+		sendRestaurant(senderID, restType);
 	}
 	else{
 		sendTypingOn(senderID);
@@ -447,8 +458,8 @@ function sendMap(recipientId) {
  * Send a Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendRestaurant(recipientId) {
-  var restaurant = getRestaurant();
+function sendRestaurant(recipientId,restaurantType) {
+  var restaurant = getRestaurant(restaurantType);
   var restaurantName = restaurant[1];
   console.log(restaurantName);
   var restaurantIndex = restaurant[0];
@@ -485,21 +496,58 @@ function sendRestaurant(recipientId) {
   callSendAPI(messageData);
 }
 
-var getRestaurant = function(){
-	var restaurant = [
-	"McDonalds", 		//0
-	"Burger King", 		//1
-	"Steak N Shake", 	//2
-	"Hardees", 			//3
-	"Wendys", 			//4
-	"Starbucks", 		//5
-	"Texas Roadhouse", 	//6
-	"Denny's",			//7
-	"Rally's"			//8
-	];
-	var position = Math.floor(Math.random() * restaurant.length);
-	var choice = restaurant[position];
-	return [position, choice];
+var getRestaurant = function(restaurantType){
+	var position;
+	var choice;
+	var picture;
+	if (restaurantType == "Fast"){
+		connection.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
+            connection.release();
+            if(!err) {
+                for (var i in rows) {
+					var restaurant = rows[i];	
+				}
+				position = Math.floor(Math.random() * restaurant.length);
+				picture = restaurant.picture[position];
+				choice = restaurant.name[position];
+            }           
+        });
+	}
+	else if (restaurantType == "Dine"){
+		connection.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
+            connection.release();
+            if(!err) {
+                for (var i in rows) {
+					var restaurant = rows[i];	
+				}
+				position = Math.floor(Math.random() * restaurant.length);
+				picture = restaurant.picture[position];
+				choice = restaurant.name[position];
+            }           
+        });
+	}
+	//Fallback incase Database cannot be reached
+	else{
+		console.log("Using getRestaurant fallback method");
+		var restaurant = [
+		"McDonalds", 		//0
+		"Burger King", 		//1
+		"Steak N Shake", 	//2
+		"Hardees", 			//3
+		"Wendys", 			//4
+		"Starbucks", 		//5
+		"Texas Roadhouse", 	//6
+		"Denny's",			//7
+		"Rally's"			//8
+		];
+		position = Math.floor(Math.random() * restaurant.length);
+		choice = restaurant[position];
+		picture = position;
+	}
+	
+	
+	
+	return [picture, choice];
 };
 
 
@@ -525,6 +573,31 @@ function sendErrorReply(recipientId) {
           "content_type":"text",
           "title":"👎 No",
           "payload":"RESTAURANT_NO"
+        }
+      ]
+    }
+  };
+  sendTypingOff(recipientId);
+  callSendAPI(messageData);
+}
+
+function findMealType(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: "Do you want fast food or a dine-in restaurant?",
+      quick_replies: [
+        {
+          "content_type":"text",
+          "title":"🍟 Fast Food!",
+          "payload":"RESTAURANT_FAST"
+        },
+        {
+          "content_type":"text",
+          "title":"🍽 Restaurant!",
+          "payload":"RESTAURANT_DINE"
         }
       ]
     }
