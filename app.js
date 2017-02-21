@@ -503,12 +503,12 @@ var getRestaurant = function(restaurantType){
 	var picture;
 	if (restaurantType == "Fast"){
 		con.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
-            if(!err) {function setRestaurant(rows);}           
+            if(!err) {setRestaurant(rows);}           
         });
 	}
 	else if (restaurantType == "Dine"){
 		con.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
-            if(!err) {function setRestaurant(rows);}           
+            if(!err) {setRestaurant(rows);}           
         });
 	}
 	
