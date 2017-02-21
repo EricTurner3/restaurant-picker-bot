@@ -371,7 +371,7 @@ function receivedPostback(event) {
   // If the 'Another Button' is selected it will run this
   if (payload == "RESTAURANT_ANOTHER"){
 	  sendTypingOn
-	  sendRestaurant(senderID);
+	  findMealType(senderID);
   }
   if (payload == "RESTAURANT_FIND"){
 	  sendTypingOn
