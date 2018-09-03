@@ -509,11 +509,16 @@ function sendMeal(recipientId, mealName, mealPicture) {
             subtitle: "This looks good!",              
             image_url: mealPicture,
             buttons: [
-			      {
-              type: "postback",
-              payload: "MEAL_ANOTHER",
-              title: "🍽️ Another!"
-            }],
+              {
+                type: "postback",
+                payload: "MEAL_ANOTHER",
+                title: "🏡 Another!"
+              },
+              {
+                type: "postback",
+                payload: "RESTAURANT_ANOTHER",
+                title: "🍽️ On second thought, let's eat out!"
+              }],
           }]
         }
       }
@@ -552,10 +557,10 @@ function sendRestaurant(recipientId,restaurantName, restaurantIndex) {
             image_url: SERVER_URL + "/assets/restaurants/"+restaurantIndex+".jpg",
             buttons: [{
               type: "postback",
-              payload: "RESTAURANT_FIND",
-              title: "📍 Find Nearest"
+              payload: "MEAL_ANOTHER",
+              title: "🏡 On second thought, let's eat in!"
             },
-			{
+            {
               type: "postback",
               payload: "RESTAURANT_ANOTHER",
               title: "🍽️ Another!"
