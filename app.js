@@ -273,16 +273,17 @@ function receivedMessage(event) {
 	
 	//First Quick Reply Set, Yes or No to Finding a Restaurant
     if(quickReplyPayload == "RESTAURANT_YES"){
-		console.log("Retrieving Restaurant")
+		console.log("Restaurant Path");
 		sendTypingOn(senderID);
 		findMealType(senderID);
 	}
 	else if (quickReplyPayload == "RESTAURANT_NO"){
+    console.log("Meal Path");
 		sendTypingOn(senderID);
 		findFoodType(senderID);
 	}
 	
-	//Second Quick Reply, Find Fast Food or Restaurant
+	//Second Quick Reply, Path 1, Find Fast Food or Restaurant
 	if(quickReplyPayload == "RESTAURANT_FAST"){
 		console.log("Retrieving Fast Food Restaurant");
 		sendTypingOn(senderID);
@@ -294,6 +295,34 @@ function receivedMessage(event) {
 		sendTypingOn(senderID);
 		restType = "Dine";
 		getRestaurant(senderID, restType);
+  }
+  //Second Quick Reply, Path 2, Find Fast Food or Restaurant
+	if(quickReplyPayload == "MEAL_BREAKFAST"){
+		console.log("Retrieving Fast Food Restaurant");
+		sendTypingOn(senderID);
+		mealType = "BREAKFAST";
+		findFoodDifficulty(senderID, mealType);
+	}
+	else if (quickReplyPayload == "MEAL_LUNCH"){
+		console.log("Retrieving Dine-In Restaurant");
+		sendTypingOn(senderID);
+		mealType = "LUNCH";
+		findFoodDifficulty(senderID, mealType);
+  }
+  else if (quickReplyPayload == "MEAL_DINNER"){
+		console.log("Retrieving Dine-In Restaurant");
+		sendTypingOn(senderID);
+		restType = "DINNER";
+		findFoodDifficulty(senderID, mealType);
+  }
+  //Third Quick Reply for meals Parse out the difficulty and the type
+  if(quickReplyPayload.startsWith("EASY") || quickReplyPayload.startsWith("MEDIUM") || quickReplyPayload.startsWith("ADVANCED")){
+    console.log("Retrieving Meal and Difficulty");
+    //Payload will be something like EASY_BREAKFAST, this will parse it into a variable
+    var meal = quickReplyPayload.split("_");
+    sendTypingOn(senderID);
+    //Send the parsed difficulty and type and sender ID to grab a meal from DB
+    getMeal(senderID,meal[1], meal[0]);
 	}
 	/*
 	else{
@@ -496,16 +525,10 @@ function sendMeal(recipientId, mealName, mealPicture) {
 }
 
 function getMeal(senderID, mealType, levelofDifficulty){
-  if (restaurantType == "Fast"){
-		con.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
+		con.query("select picture, name from meals WHERE type = " + mealType + " AND difficulty=" + levelofDifficulty,function(err,rows){
             if(!err) {randomPicker(senderID, rows, "meal");}           
         });
-	}
-	else if (restaurantType == "Dine"){
-		con.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
-            if(!err) {randomPicker(senderID, rows, "meal");}           
-        });
-  }
+	
 }
 
 /*
@@ -620,6 +643,36 @@ function sendErrorReply(recipientId) {
           "content_type":"text",
           "title":"🍽️ Dining Out!",
           "payload":"RESTAURANT_NO"
+        }
+      ]
+    }
+  };
+  sendTypingOff(recipientId);
+  callSendAPI(messageData);
+}
+
+function findFoodDifficulty(recipientId, foodType) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: "How easy to make are you wanting it to be?",
+      quick_replies: [
+        {
+          "content_type":"text",
+          "title":"🍳 Easy!",
+          "payload":"EASY_" + foodType
+        },
+        {
+          "content_type":"text",
+          "title":"🥪 Medium!",
+          "payload":"MEDIUM_" + foodType
+        },
+        {
+          "content_type":"text",
+          "title":"🍽 Advanced!",
+          "payload":"ADVANCED_" + foodType
         }
       ]
     }
