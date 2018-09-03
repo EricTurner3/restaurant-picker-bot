@@ -525,7 +525,7 @@ function sendMeal(recipientId, mealName, mealPicture) {
 }
 
 function getMeal(senderID, mealType, levelofDifficulty){
-		con.query("select picture, name from meals WHERE type = " + mealType + " AND difficulty = " + levelofDifficulty,function(err,rows){
+		con.query('select picture, name from meals WHERE type = "' + mealType + '" AND difficulty = "' + levelofDifficulty+ '"',function(err,rows){
             if(!err) {randomPicker(senderID, rows, 'meal');} 
             else{console.log(err);}          
         });
