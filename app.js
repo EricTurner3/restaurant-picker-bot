@@ -636,12 +636,12 @@ function sendErrorReply(recipientId) {
       quick_replies: [
         {
           "content_type":"text",
-          "title":"🏡 At home!",
+          "title":"🍽️ Dining Out!",
           "payload":"RESTAURANT_YES"
         },
         {
           "content_type":"text",
-          "title":"🍽️ Dining Out!",
+          "title":"🏡 At home!",
           "payload":"RESTAURANT_NO"
         }
       ]
