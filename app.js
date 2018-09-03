@@ -300,19 +300,19 @@ function receivedMessage(event) {
 	if(quickReplyPayload == "MEAL_BREAKFAST"){
 		console.log("Retrieving Fast Food Restaurant");
 		sendTypingOn(senderID);
-		mealType = "BREAKFAST";
+		var mealType = "BREAKFAST";
 		findFoodDifficulty(senderID, mealType);
 	}
 	else if (quickReplyPayload == "MEAL_LUNCH"){
 		console.log("Retrieving Dine-In Restaurant");
 		sendTypingOn(senderID);
-		mealType = "LUNCH";
+		var mealType = "LUNCH";
 		findFoodDifficulty(senderID, mealType);
   }
   else if (quickReplyPayload == "MEAL_DINNER"){
 		console.log("Retrieving Dine-In Restaurant");
 		sendTypingOn(senderID);
-		restType = "DINNER";
+		var mealType = "DINNER";
 		findFoodDifficulty(senderID, mealType);
   }
   //Third Quick Reply for meals Parse out the difficulty and the type
