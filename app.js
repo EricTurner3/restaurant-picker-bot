@@ -24,6 +24,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(express.static('public'));
 
+/*
 //Initialize node-mySQL
 var mysql = require("mysql");
 
@@ -41,7 +42,7 @@ con.connect(function(err){
   }
   console.log('Connection established');
 });
-
+*/
 
 //Finding Restaurant Mode
 var findRest = 0;
