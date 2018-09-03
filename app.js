@@ -279,7 +279,7 @@ function receivedMessage(event) {
 	}
 	else if (quickReplyPayload == "RESTAURANT_NO"){
 		sendTypingOn(senderID);
-		sendTextMessage(senderID, "Okay, let me know if you want me to find you a restaurant!")
+		findFoodType(senderID);
 	}
 	
 	//Second Quick Reply, Find Fast Food or Restaurant
@@ -374,7 +374,11 @@ function receivedPostback(event) {
 	  sendTypingOn
 	  findMealType(senderID);
   }
-  if (payload == "RESTAURANT_FIND"){
+  else if (payload == "MEAL_ANOTHER"){
+	  sendTypingOn
+	  findFoodType(senderID);
+  }
+  else if (payload == "RESTAURANT_FIND"){
 	  sendTypingOn
 	  sendTextMessage(recipientID,"Send me your location and I'll find the nearest one!");
 	  findRest = 1;
@@ -459,8 +463,53 @@ function sendMap(recipientId) {
   callSendAPI(messageData);
 }
 
+//Meal Methods
+//Send the meal message
+function sendMeal(recipientId, mealName, mealPicture) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: mealName,
+            subtitle: "This looks good!",              
+            image_url: mealPicture,
+            buttons: [
+			      {
+              type: "postback",
+              payload: "MEAL_ANOTHER",
+              title: "🍽️ Another!"
+            }],
+          }]
+        }
+      }
+    }
+  };  
+
+  sendTypingOff(recipientId);
+  callSendAPI(messageData);
+}
+
+function getMeal(senderID, mealType, levelofDifficulty){
+  if (restaurantType == "Fast"){
+		con.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
+            if(!err) {randomPicker(senderID, rows, "meal");}           
+        });
+	}
+	else if (restaurantType == "Dine"){
+		con.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
+            if(!err) {randomPicker(senderID, rows, "meal");}           
+        });
+  }
+}
+
 /*
- * Send a Structured Message (Generic Message type) using the Send API.
+ * Send the restaurant message
  *
  */
 function sendRestaurant(recipientId,restaurantName, restaurantIndex) {
@@ -500,12 +549,12 @@ function sendRestaurant(recipientId,restaurantName, restaurantIndex) {
 function getRestaurant(senderID, restaurantType){
 	if (restaurantType == "Fast"){
 		con.query("select picture, name from restaurants WHERE type = 'fast' ",function(err,rows){
-            if(!err) {setRestaurant(senderID, rows);}           
+            if(!err) {randomPicker(senderID, rows, 'restaurant');}           
         });
 	}
 	else if (restaurantType == "Dine"){
 		con.query("select picture, name from restaurants WHERE type = 'dine' ",function(err,rows){
-            if(!err) {setRestaurant(senderID, rows);}           
+            if(!err) {randomPicker(senderID, rows, 'restaurant');}           
         });
 	}
 	
@@ -532,7 +581,7 @@ function getRestaurant(senderID, restaurantType){
 	
 }
 
-function setRestaurant(senderID, value){
+function randomPicker(senderID, value, type){
 	
 	restaurantChoices = value;
 	console.log(restaurantChoices);
@@ -541,8 +590,11 @@ function setRestaurant(senderID, value){
 	var position = Math.floor(Math.random() * restaurantChoices.length);
 	var choice = restParse[position].name;
 	var picture = restParse[position].picture;
-	
-	sendRestaurant(senderID, choice, picture);
+  
+  if(type == 'restaurant')
+    sendRestaurant(senderID, choice, picture);
+  else if(type == 'meal')
+    sendMeal(senderID, choice, picture);
 }
 
 
@@ -557,17 +609,47 @@ function sendErrorReply(recipientId) {
       id: recipientId
     },
     message: {
-      text: "Did you want me to find a restaurant for you to eat at?",
+      text: "Are you wanting a meal at home or dining out?",
       quick_replies: [
         {
           "content_type":"text",
-          "title":"👍 Yes",
+          "title":"🏡 At home!",
           "payload":"RESTAURANT_YES"
         },
         {
           "content_type":"text",
-          "title":"👎 No",
+          "title":"🍽️ Dining Out!",
           "payload":"RESTAURANT_NO"
+        }
+      ]
+    }
+  };
+  sendTypingOff(recipientId);
+  callSendAPI(messageData);
+}
+
+function findFoodType(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: "What type of meal are you wanting?",
+      quick_replies: [
+        {
+          "content_type":"text",
+          "title":"🍳 Breakfast!",
+          "payload":"MEAL_BREAKFAST"
+        },
+        {
+          "content_type":"text",
+          "title":"🥪 Lunch!",
+          "payload":"MEAL_LUNCH"
+        },
+        {
+          "content_type":"text",
+          "title":"🍽 Dinner!",
+          "payload":"MEAL_DINNER"
         }
       ]
     }
