@@ -559,7 +559,7 @@ function getMeal(senderID, mealType, levelofDifficulty){
  * Send the restaurant message
  *
  */
-function sendRestaurant(recipientId,restaurantName, restaurantIndex) {
+function sendRestaurant(recipientId,restaurantName, picture) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -572,7 +572,7 @@ function sendRestaurant(recipientId,restaurantName, restaurantIndex) {
           elements: [{
             title: restaurantName,
             subtitle: "You should eat here!",              
-            image_url: SERVER_URL + "/assets/restaurants/"+restaurantIndex+".jpg",
+            image_url: picture,
             buttons: [{
               type: "postback",
               payload: "MEAL_ANOTHER",
